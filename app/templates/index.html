@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo — FlashArcade{% endblock %}
+
+{% block content %}
+<section class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+  <div>
+    <h1 class="text-3xl font-bold tracking-tight">Juegos Flash</h1>
+    <p class="text-slate-400 text-sm mt-1">
+      Mostrando {{ games|length }} {{ "juego" if games|length == 1 else "juegos" }} disponibles.
+    </p>
+  </div>
+
+  <form method="get" action="/" class="flex flex-wrap gap-2">
+    <input
+      type="text"
+      name="q"
+      value="{{ query }}"
+      placeholder="Buscar juego..."
+      class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+    />
+    <select
+      name="category"
+      class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400"
+    >
+      <option value="">Todas las categorías</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+          {{ cat }}
+        </option>
+      {% endfor %}
+    </select>
+    <button
+      type="submit"
+      class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-semibold px-4 py-2 rounded-lg text-sm transition cursor-pointer"
+    >
+      Filtrar
+    </button>
+  </form>
+</section>
+
+{% if games %}
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for game in games %}
+      <article class="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between gap-4 hover:border-slate-700 transition">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between gap-2 text-xs">
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-amber-300 font-medium">
+              {{ game.category }}
+            </span>
+            <span class="uppercase font-mono text-slate-400">{{ game.engine.value }}</span>
+          </div>
+          <h2 class="text-lg font-semibold text-white">{{ game.title }}</h2>
+          <p class="text-sm text-slate-400 line-clamp-2">{{ game.description }}</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+          <span class="text-xs text-slate-500 font-mono">{{ game.plays }} partidas</span>
+          <a
+            href="/play/{{ game.slug }}"
+            class="inline-flex items-center justify-center bg-amber-400 hover:bg-amber-300 text-slate-950 font-semibold text-sm px-4 py-2 rounded-lg transition"
+          >
+            Jugar
+          </a>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-slate-400">
+    No se encontraron juegos con los filtros actuales.
+  </div>
+{% endif %}
+{% endblock %}

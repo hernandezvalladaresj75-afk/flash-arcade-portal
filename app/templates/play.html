@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game.title }} — FlashArcade{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <a href="/" class="text-sm text-amber-400 hover:underline">&larr; Volver al catálogo</a>
+    <h1 class="text-2xl font-bold mt-1">{{ game.title }}</h1>
+    <p class="text-xs text-slate-400 mt-0.5">
+      {{ game.category }} &bull; Motor: <span class="uppercase font-mono">{{ game.engine.value }}</span> &bull; {{ game.plays }} partidas
+    </p>
+  </div>
+</div>
+
+<div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+  <div id="ruffle-container" class="w-full aspect-[4/3] bg-black rounded-lg overflow-hidden flex items-center justify-center"></div>
+</div>
+
+<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+<script>
+  window.RufflePlayer = window.RufflePlayer || {};
+  window.addEventListener("DOMContentLoaded", () => {
+    const ruffle = window.RufflePlayer.newest();
+    const player = ruffle.createPlayer();
+    player.style.width = "100%";
+    player.style.height = "100%";
+
+    const container = document.getElementById("ruffle-container");
+    container.innerHTML = "";
+    container.appendChild(player);
+
+    player.load({
+      url: {{ game.swf_url | tojson }}
+    });
+  });
+</script>
+{% endblock %}
